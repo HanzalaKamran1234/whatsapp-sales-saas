@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-export async function sendWhatsAppMessage(phoneNumberId: string, to: string, body: string) {
-  const token = process.env.WHATSAPP_ACCESS_TOKEN;
+export async function sendWhatsAppMessage(phoneNumberId: string, to: string, body: string, accessToken?: string) {
+  const token = accessToken || process.env.WHATSAPP_ACCESS_TOKEN;
   
   if (!token) {
     console.error('Missing WHATSAPP_ACCESS_TOKEN');
@@ -33,3 +33,4 @@ export async function sendWhatsAppMessage(phoneNumberId: string, to: string, bod
     return null;
   }
 }
+

@@ -1,19 +1,51 @@
 import { NextResponse } from 'next/server';
-import { store } from '@/lib/store';
+import { createClient } from '@/lib/supabase/server';
+import { auth } from '@clerk/nextjs/server';
 
 export async function GET() {
-  return NextResponse.json(store.faqs);
+  const { userId } = await auth();
+  if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from('faqs')
+    .select('*')
+    .eq('user_id', userId)
+    .order('created_at', { ascending: false });
+
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  return NextResponse.json(data);
 }
 
 export async function POST(request: Request) {
+  const { userId } = await auth();
+  if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
   const body = await request.json();
-  const newFaq = { faq_id: Date.now().toString(), user_id: 'demo', ...body };
-  store.faqs.push(newFaq);
-  return NextResponse.json(newFaq, { status: 201 });
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from('faqs')
+    .insert({ ...body, user_id: userId, created_at: new Date().toISOString() })
+    .select()
+    .single();
+
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  return NextResponse.json(data, { status: 201 });
 }
 
 export async function DELETE(request: Request) {
-  const { faq_id } = await request.json();
-  store.faqs = store.faqs.filter(f => f.faq_id !== faq_id);
+  const { userId } = await auth();
+  if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
+  const { id } = await request.json();
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from('faqs')
+    .delete()
+    .eq('id', id)
+    .eq('user_id', userId);
+
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
   return NextResponse.json({ success: true });
 }
+

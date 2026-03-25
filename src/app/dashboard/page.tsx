@@ -85,18 +85,21 @@ function RecentLeads() {
   return (
     <div className="divide-y divide-neutral-800/50">
       {leads.map(l => (
-        <div key={l.lead_id} className="px-5 py-3.5 flex items-center justify-between hover:bg-neutral-800/30 transition-colors">
+        <div key={l.id} className="px-5 py-3.5 flex items-center justify-between hover:bg-neutral-800/30 transition-colors">
           <div className="flex items-center space-x-3">
-            <div className="w-8 h-8 rounded-full bg-neutral-800 flex items-center justify-center text-xs font-bold text-emerald-400 border border-neutral-700">{l.customer_name[0]}</div>
+            <div className="w-8 h-8 rounded-full bg-neutral-800 flex items-center justify-center text-xs font-bold text-emerald-400 border border-neutral-700">
+              {(l.customer_name || l.customer_number || '?')[0]}
+            </div>
             <div>
-              <p className="text-sm font-medium text-white leading-tight">{l.customer_name}</p>
+              <p className="text-sm font-medium text-white leading-tight">{l.customer_name || 'New Lead'}</p>
               <p className="text-xs text-neutral-500 mt-0.5 truncate max-w-[220px]">{l.message}</p>
             </div>
           </div>
-          <span className={`px-2.5 py-0.5 rounded-md text-xs font-semibold border shadow-inner capitalize ${tagColor(l.tags[0])}`}>{l.tags[0]}</span>
+          <span className={`px-2.5 py-0.5 rounded-md text-xs font-semibold border shadow-inner capitalize ${tagColor(l.tags ? l.tags[0] : 'cold')}`}>{l.tags ? l.tags[0] : 'cold'}</span>
         </div>
       ))}
     </div>
+
   );
 }
 

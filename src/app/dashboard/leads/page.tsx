@@ -17,8 +17,8 @@ export default function LeadsManager() {
   };
   useEffect(() => { fetchLeads(); }, []);
 
-  const updateTag = async (lead_id: string, tag: Tag) => {
-    await fetch('/api/leads', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ lead_id, tags: [tag] }) });
+  const updateTag = async (id: string, tag: Tag) => {
+    await fetch('/api/leads', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id, tags: [tag] }) });
     fetchLeads();
   };
 
@@ -108,7 +108,7 @@ function LeadRow({ lead, onTagChange }: { lead: any; onTagChange: (id: string, t
           <button onClick={() => setOpen(o => !o)} className={`px-2.5 py-1 rounded-md text-xs font-semibold border capitalize ${tagStyle(lead.tags[0])}`}>{lead.tags[0]} ▾</button>
           {open && (
             <div className="absolute top-7 left-0 z-20 bg-neutral-900 border border-neutral-700 rounded-xl shadow-xl overflow-hidden w-24">
-              {(['hot', 'warm', 'cold'] as Tag[]).map(t => <button key={t} onClick={() => { onTagChange(lead.lead_id, t); setOpen(false); }} className="w-full text-left px-3 py-2 text-xs font-medium capitalize hover:bg-neutral-800 text-neutral-300 hover:text-white transition-colors">{t}</button>)}
+              {(['hot', 'warm', 'cold'] as Tag[]).map(t => <button key={t} onClick={() => { onTagChange(lead.id, t); setOpen(false); }} className="w-full text-left px-3 py-2 text-xs font-medium capitalize hover:bg-neutral-800 text-neutral-300 hover:text-white transition-colors">{t}</button>)}
             </div>
           )}
         </div>

@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { Plus, Trash2, Edit2, Search, X, Check } from "lucide-react";
 
 interface FAQ {
-  faq_id: string;
+  id: string;
   name: string;
   keywords: string[];
   answer: string;
@@ -33,7 +33,7 @@ export default function FAQManager() {
   };
 
   const del = async (id: string) => {
-    await fetch('/api/faqs', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ faq_id: id }) });
+    await fetch('/api/faqs', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id }) });
     fetchFaqs();
   };
 
@@ -70,7 +70,7 @@ export default function FAQManager() {
           <tbody className="divide-y divide-neutral-800/80">
             {filtered.length === 0 && <tr><td colSpan={4} className="px-6 py-12 text-center text-neutral-600">No rules found. Add one!</td></tr>}
             {filtered.map(faq => (
-              <tr key={faq.faq_id} className="hover:bg-neutral-800/40 transition-colors group">
+              <tr key={faq.id} className="hover:bg-neutral-800/40 transition-colors group">
                 <td className="px-6 py-4 font-medium text-white">{faq.name}</td>
                 <td className="px-6 py-4">
                   <div className="flex flex-wrap gap-1.5">
@@ -81,11 +81,12 @@ export default function FAQManager() {
                 <td className="px-6 py-4 text-right">
                   <div className="flex items-center justify-end space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
                     <button className="text-neutral-500 hover:text-white transition-colors bg-neutral-800 p-1.5 rounded-md hover:bg-neutral-700"><Edit2 size={14} /></button>
-                    <button onClick={() => del(faq.faq_id)} className="text-neutral-500 hover:text-red-400 transition-colors bg-neutral-800 p-1.5 rounded-md hover:bg-neutral-700"><Trash2 size={14} /></button>
+                    <button onClick={() => del(faq.id)} className="text-neutral-500 hover:text-red-400 transition-colors bg-neutral-800 p-1.5 rounded-md hover:bg-neutral-700"><Trash2 size={14} /></button>
                   </div>
                 </td>
               </tr>
             ))}
+
           </tbody>
         </table>
       </div>

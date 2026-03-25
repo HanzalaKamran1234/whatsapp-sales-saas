@@ -1,7 +1,8 @@
 'use client';
 import { useState } from 'react';
 import Link from 'next/link';
-import { Bot, MessageSquare, Zap, ShieldCheck, Check, ChevronDown } from 'lucide-react';
+import { Bot, MessageSquare, Zap, ShieldCheck, Check, ChevronDown, User, LogIn } from 'lucide-react';
+import { SignedIn, SignedOut, UserButton, SignInButton, SignUpButton } from "@clerk/nextjs";
 
 // ── COUNTRIES & PRICING DATA ─────────────────────────────────────────────────
 const COUNTRIES = [
@@ -25,10 +26,70 @@ const fmt = (n: number) => n >= 1000 ? n.toLocaleString() : String(n);
 export default function Home() {
   const [countryIdx, setCountryIdx] = useState(0); // default Pakistan
   const [ddOpen, setDdOpen] = useState(false);
+  const [loading, setLoading] = useState<string | null>(null);
   const country = COUNTRIES[countryIdx];
+
+  const handleCheckout = async (planId: string) => {
+    if (planId === 'free') return; // Free plan handled by Link
+    setLoading(planId);
+    try {
+      const res = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ planId }),
+      });
+      const data = await res.json();
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        alert(data.error || 'Failed to create checkout session');
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Something went wrong');
+    } finally {
+      setLoading(null);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-neutral-950 text-white font-sans selection:bg-emerald-500/30 flex flex-col items-center p-6 relative overflow-hidden">
+      
+      {/* ── NAVBAR ────────────────────────────────────────────── */}
+
+      <nav className="max-w-6xl w-full flex items-center justify-between py-6 relative z-50">
+        <div className="flex items-center space-x-2">
+          <div className="w-10 h-10 bg-emerald-500 rounded-xl flex items-center justify-center shadow-[0_0_20px_rgba(16,185,129,0.4)]">
+            <Zap size={20} className="text-white fill-current" />
+          </div>
+          <span className="text-xl font-bold tracking-tight">AutoSales</span>
+        </div>
+        
+        <div className="flex items-center space-x-6">
+          <Link href="/contact" className="text-sm font-medium text-neutral-400 hover:text-white transition-colors">Contact</Link>
+          <SignedOut>
+            <SignInButton mode="modal">
+              <button className="text-sm font-bold text-neutral-400 hover:text-white transition-colors flex items-center space-x-2">
+                <LogIn size={16} />
+                <span>Login</span>
+              </button>
+            </SignInButton>
+            <SignUpButton mode="modal">
+              <button className="bg-emerald-500 hover:bg-emerald-600 text-white px-5 py-2 rounded-lg text-sm font-bold transition-all shadow-[0_4px_12px_rgba(16,185,129,0.3)]">
+                Get Started
+              </button>
+            </SignUpButton>
+          </SignedOut>
+          <SignedIn>
+            <Link href="/dashboard" className="text-sm font-bold bg-neutral-800 hover:bg-neutral-700 border border-neutral-700 px-4 py-2 rounded-lg flex items-center space-x-2 transition-all">
+              <User size={16} />
+              <span>Dashboard</span>
+            </Link>
+            <UserButton />
+          </SignedIn>
+        </div>
+      </nav>
+
       {/* BG glow */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[600px] bg-emerald-500/8 rounded-full blur-[140px] pointer-events-none" />
 
@@ -48,9 +109,18 @@ export default function Home() {
         </p>
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
-          <Link href="/dashboard" className="px-8 py-4 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-xl shadow-[0_0_30px_rgba(16,185,129,0.4)] transition-all transform hover:scale-105">
-            Get Started For Free
-          </Link>
+          <SignedIn>
+            <Link href="/dashboard" className="px-8 py-4 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-xl shadow-[0_0_30px_rgba(16,185,129,0.4)] transition-all transform hover:scale-105">
+              Go to Dashboard
+            </Link>
+          </SignedIn>
+          <SignedOut>
+            <SignUpButton mode="modal">
+              <button className="px-8 py-4 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-xl shadow-[0_0_30px_rgba(16,185,129,0.4)] transition-all transform hover:scale-105">
+                Get Started For Free
+              </button>
+            </SignUpButton>
+          </SignedOut>
           <a href="#pricing" className="px-8 py-4 bg-neutral-900 border border-neutral-800 hover:bg-neutral-800 text-white font-bold rounded-xl shadow-sm transition-all">
             See Pricing
           </a>
@@ -125,6 +195,8 @@ export default function Home() {
             ]}
             cta="Get Started Free"
             href="/dashboard"
+            onClick={() => {}}
+            loading={false}
           />
 
           {/* STARTER */}
@@ -145,7 +217,9 @@ export default function Home() {
               'Email support',
             ]}
             cta="Start Starter"
-            href="/dashboard"
+            href="#"
+            onClick={() => handleCheckout('starter')}
+            loading={loading === 'starter'}
           />
 
           {/* PRO */}
@@ -166,14 +240,42 @@ export default function Home() {
               'Priority 24/7 support',
             ]}
             cta="Go Pro"
-            href="/dashboard"
+            href="#"
+            onClick={() => handleCheckout('pro')}
+            loading={loading === 'pro'}
           />
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="mt-24 pb-8 text-neutral-600 text-xs text-center z-10">
-        © 2025 WhatsApp SaaS · Built for sellers worldwide · <Link href="/dashboard" className="text-neutral-500 hover:text-white transition-colors">Open Dashboard</Link>
+      <footer className="mt-24 pb-8 w-full max-w-6xl border-t border-neutral-900 pt-12">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
+          <div className="col-span-2">
+             <div className="flex items-center space-x-2 mb-4">
+              <Zap size={20} className="text-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]" />
+              <span className="text-lg font-bold">AutoSales</span>
+            </div>
+            <p className="text-neutral-500 text-sm max-w-xs">Helping small businesses automate their WhatsApp sales and capture more leads 24/7.</p>
+          </div>
+          <div className="space-y-4">
+            <h4 className="text-sm font-bold text-white uppercase tracking-widest">Product</h4>
+            <ul className="space-y-2">
+              <li><a href="#pricing" className="text-neutral-400 hover:text-emerald-400 text-sm transition-colors">Pricing</a></li>
+              <li><Link href="/dashboard" className="text-neutral-400 hover:text-emerald-400 text-sm transition-colors">Dashboard</Link></li>
+            </ul>
+          </div>
+          <div className="space-y-4">
+            <h4 className="text-sm font-bold text-white uppercase tracking-widest">Legal</h4>
+            <ul className="space-y-2">
+              <li><Link href="/contact" className="text-neutral-400 hover:text-emerald-400 text-sm transition-colors">Contact</Link></li>
+              <li><Link href="/privacy" className="text-neutral-400 hover:text-emerald-400 text-sm transition-colors">Privacy Policy</Link></li>
+              <li><Link href="/terms" className="text-neutral-400 hover:text-emerald-400 text-sm transition-colors">Terms of Service</Link></li>
+            </ul>
+          </div>
+        </div>
+        <div className="border-t border-neutral-900 pt-8 text-neutral-600 text-xs text-center">
+          © {new Date().getFullYear()} WhatsApp SaaS · Built for sellers worldwide
+        </div>
       </footer>
     </div>
   );
@@ -190,9 +292,10 @@ function FeatureCard({ icon, title, desc }: { icon: React.ReactNode; title: stri
   );
 }
 
-function PlanCard({ name, badge, price, symbol, period, color, features, cta, href }: {
+function PlanCard({ name, badge, price, symbol, period, color, features, cta, href, onClick, loading }: {
   name: string; badge: string | null; price: string; symbol: string; period: string;
   color: 'neutral' | 'emerald' | 'purple'; features: string[]; cta: string; href: string;
+  onClick?: () => void; loading?: boolean;
 }) {
   const isPopular = color === 'emerald';
   const borderCls = isPopular ? 'border-emerald-500/50 shadow-[0_0_40px_rgba(16,185,129,0.15)]' : color === 'purple' ? 'border-purple-500/20' : 'border-neutral-800';
@@ -203,7 +306,7 @@ function PlanCard({ name, badge, price, symbol, period, color, features, cta, hr
     : 'bg-neutral-800 hover:bg-neutral-700 text-white border border-neutral-700';
   const checkCls = isPopular ? 'text-emerald-400' : color === 'purple' ? 'text-purple-400' : 'text-neutral-500';
 
-  return (
+  const Content = (
     <div className={`relative bg-neutral-900 border rounded-2xl p-7 flex flex-col shadow-lg transition-all hover:-translate-y-1 duration-300 ${borderCls}`}>
       {badge && (
         <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-emerald-500 text-white text-xs font-bold px-4 py-1 rounded-full shadow-[0_0_15px_rgba(16,185,129,0.5)] whitespace-nowrap">
@@ -229,9 +332,25 @@ function PlanCard({ name, badge, price, symbol, period, color, features, cta, hr
         ))}
       </ul>
 
-      <Link href={href} className={`block w-full text-center font-bold py-3 rounded-xl transition-all text-sm ${ctaCls}`}>
-        {cta}
-      </Link>
+      {onClick && name !== 'Free' ? (
+        <button 
+          onClick={onClick}
+          disabled={loading}
+          className={`block w-full text-center font-bold py-3 rounded-xl transition-all text-sm disabled:opacity-50 disabled:cursor-not-allowed ${ctaCls}`}
+        >
+          {loading ? 'Processing...' : cta}
+        </button>
+      ) : (
+        <Link href={href} className={`block w-full text-center font-bold py-3 rounded-xl transition-all text-sm ${ctaCls}`}>
+          {cta}
+        </Link>
+      )}
     </div>
   );
+
+  return Content;
 }
+
+
+
+

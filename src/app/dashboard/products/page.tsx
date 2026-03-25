@@ -3,7 +3,7 @@ import { useState, useEffect, useRef } from 'react';
 import { Upload, Plus, Trash2, X, Check, Package } from "lucide-react";
 
 interface Product {
-  product_id: string;
+  id: string;
   name: string;
   price: string;
   description: string;
@@ -30,7 +30,7 @@ export default function ProductsManager() {
   };
 
   const del = async (id: string) => {
-    await fetch('/api/products', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ product_id: id }) });
+    await fetch('/api/products', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id }) });
     fetchProducts();
   };
 
@@ -70,12 +70,12 @@ export default function ProductsManager() {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {products.map(p => (
-          <div key={p.product_id} className="bg-neutral-900 border border-neutral-800 rounded-2xl p-5 hover:border-neutral-700 transition-colors group shadow-sm">
+          <div key={p.id} className="bg-neutral-900 border border-neutral-800 rounded-2xl p-5 hover:border-neutral-700 transition-colors group shadow-sm">
             <div className="flex items-start justify-between mb-3">
               <div className="w-10 h-10 rounded-xl bg-neutral-950 border border-neutral-800 flex items-center justify-center shadow-inner">
                 <Package size={18} className="text-emerald-400" />
               </div>
-              <button onClick={() => del(p.product_id)} className="text-neutral-600 hover:text-red-400 transition-colors opacity-0 group-hover:opacity-100 p-1.5 bg-neutral-800 rounded-lg hover:bg-neutral-700">
+              <button onClick={() => del(p.id)} className="text-neutral-600 hover:text-red-400 transition-colors opacity-0 group-hover:opacity-100 p-1.5 bg-neutral-800 rounded-lg hover:bg-neutral-700">
                 <Trash2 size={14} />
               </button>
             </div>
@@ -84,6 +84,7 @@ export default function ProductsManager() {
             <p className="text-neutral-500 text-xs leading-relaxed">{p.description}</p>
           </div>
         ))}
+
 
         {/* Add New Card */}
         <button onClick={() => setShowModal(true)} className="bg-neutral-900/40 border border-neutral-800 border-dashed rounded-2xl p-5 flex flex-col items-center justify-center text-center space-y-3 hover:border-emerald-500/50 hover:bg-neutral-800/30 transition-all min-h-[160px] group">
