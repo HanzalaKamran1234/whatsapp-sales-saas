@@ -80,7 +80,15 @@ export default function DashboardOverview() {
 
 function RecentLeads() {
   const [leads, setLeads] = useState<any[]>([]);
-  useEffect(() => { fetch('/api/leads').then(r => r.json()).then(d => setLeads(d.slice(0, 4))); }, []);
+  useEffect(() => { 
+    fetch('/api/leads')
+      .then(r => r.json())
+      .then(d => {
+        if (Array.isArray(d)) setLeads(d.slice(0, 4));
+        else setLeads([]);
+      })
+      .catch(() => setLeads([]));
+  }, []);
   const tagColor = (t: string) => t === 'hot' ? 'text-orange-400 bg-orange-500/10 border-orange-500/20' : t === 'warm' ? 'text-yellow-400 bg-yellow-500/10 border-yellow-500/20' : 'text-blue-400 bg-blue-500/10 border-blue-500/20';
   return (
     <div className="divide-y divide-neutral-800/50">
@@ -129,8 +137,9 @@ function QuickBtn({ href, label, color }: { href: string; label: string; color: 
 }
 
 function CreditWidget({ credits }: { credits: { used: number; limit: number; percent: number; plan: string } }) {
-  const isWarning = credits.percent >= 80;
-  const isFull = credits.percent >= 100;
+  if (!credits) return null;
+  const isWarning = (credits.percent ?? 0) >= 80;
+  const isFull = (credits.percent ?? 0) >= 100;
   const barColor = isFull ? 'bg-red-500' : isWarning ? 'bg-orange-500' : 'bg-emerald-500';
   return (
     <div className={`rounded-2xl border p-6 shadow-sm ${isFull ? 'bg-red-500/5 border-red-500/20' : isWarning ? 'bg-orange-500/5 border-orange-500/20' : 'bg-neutral-900 border-neutral-800'}`}>
