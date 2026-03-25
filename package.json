@@ -9,14 +9,14 @@
     "lint": "eslint"
   },
   "dependencies": {
-    "@clerk/nextjs": "6.0.0",
+    "@clerk/nextjs": "^6.0.0",
     "@supabase/ssr": "^0.9.0",
     "@supabase/supabase-js": "^2.100.0",
     "axios": "^1.13.6",
     "lucide-react": "^0.454.0",
-    "next": "15.0.0",
-    "react": "19.0.0",
-    "react-dom": "19.0.0",
+    "next": "^15.1.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
     "resend": "^6.9.4",
     "stripe": "^17.0.0"
   },
@@ -26,7 +26,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
-    "eslint-config-next": "15.0.0",
+    "eslint-config-next": "^15.1.0",
     "tailwindcss": "^4",
     "typescript": "^5"
   }
