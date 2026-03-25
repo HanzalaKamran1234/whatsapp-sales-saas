@@ -30,7 +30,13 @@ export async function POST(request: Request) {
     if (!plan.priceId) {
       return NextResponse.json({ error: `Stripe Price ID for '${planId}' is missing in your Vercel Environment Variables.` }, { status: 400 });
     }
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL;
 
+    if (!appUrl || !appUrl.startsWith('http')) {
+      return NextResponse.json({ 
+        error: `Your NEXT_PUBLIC_APP_URL is missing or invalid (${appUrl}). It must start with https:// (e.g. hhttps://whatsapp-sales-saas.vercel.app)` 
+      }, { status: 400 });
+    }
 
     // Create Stripe Checkout Session
     const session = await stripe.checkout.sessions.create({
@@ -42,8 +48,9 @@ export async function POST(request: Request) {
         },
       ],
       mode: 'subscription',
-      success_url: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard?checkout=success`,
-      cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/#pricing`,
+      success_url: `${appUrl}/dashboard?checkout=success`,
+      cancel_url: `${appUrl}/#pricing`,
+
       metadata: {
         userId,
         planId,
