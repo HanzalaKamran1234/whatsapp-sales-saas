@@ -17,7 +17,7 @@ export default function TermsPage() {
           <section className="space-y-4">
             <h2 className="text-xl font-bold text-white">1. Acceptance of Terms</h2>
             <p>
-              By accessing or using WhatsApp Sales SaaS, you agree to be bound by these Terms of Service. 
+              By accessing or using AutoSales, you agree to be bound by these Terms of Service. 
               If you do not agree to all of these terms, do not use our services.
             </p>
           </section>
@@ -25,7 +25,7 @@ export default function TermsPage() {
           <section className="space-y-4">
             <h2 className="text-xl font-bold text-white">2. Description of Service</h2>
             <p>
-              WhatsApp Sales SaaS provides a rule-based auto-reply engine for WhatsApp Business. 
+              AutoSales provides a rule-based auto-reply engine for WhatsApp Business. 
               We provide tools to manage products, FAQ rules, and lead capture.
             </p>
           </section>
@@ -51,7 +51,7 @@ export default function TermsPage() {
           <section className="space-y-4">
             <h2 className="text-xl font-bold text-white">5. Limitation of Liability</h2>
             <p>
-              To the maximum extent permitted by law, WhatsApp Sales SaaS shall not be liable for any indirect, 
+              To the maximum extent permitted by law, AutoSales shall not be liable for any indirect, 
               incidental, special, consequential, or punitive damages resulting from your use of the service. 
               This includes any interruptions caused by third-party APIs (Meta, Clerk, etc.).
             </p>

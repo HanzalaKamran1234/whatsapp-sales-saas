@@ -9,12 +9,10 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
       {/* Sidebar */}
       <aside className="w-64 bg-neutral-900 border-r border-neutral-800 flex flex-col shadow-2xl z-10">
         <div className="p-6 flex items-center space-x-2">
-          <div className="w-8 h-8 bg-emerald-500 rounded-lg flex items-center justify-center">
-            <Zap size={16} className="text-white fill-current" />
-          </div>
+          <Zap size={22} className="text-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.4)]" />
           <div>
-            <h1 className="text-xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-green-400 to-emerald-500">
-              AutoSaaS
+            <h1 className="text-xl font-bold tracking-tight text-white">
+              AutoSales
             </h1>
             <p className="text-[10px] text-neutral-500 uppercase tracking-widest font-bold">WhatsApp Engine</p>
           </div>

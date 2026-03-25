@@ -62,9 +62,7 @@ export default function Home() {
 
       <nav className="max-w-6xl w-full flex flex-col md:flex-row items-center justify-between py-6 gap-y-6 md:gap-y-0 relative z-50">
         <div className="flex items-center space-x-2">
-          <div className="w-10 h-10 bg-emerald-500 rounded-xl flex items-center justify-center shadow-[0_0_20px_rgba(16,185,129,0.4)]">
-            <Zap size={20} className="text-white fill-current" />
-          </div>
+          <Zap size={24} className="text-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.5)]" />
           <span className="text-xl font-bold tracking-tight">AutoSales</span>
         </div>
         

@@ -17,7 +17,7 @@ export default function PrivacyPage() {
           <section className="space-y-4">
             <h2 className="text-xl font-bold text-white">1. Introduction</h2>
             <p>
-              WhatsApp Sales SaaS (&quot;we&quot;, &quot;us&quot;, or &quot;our&quot;) is committed to protecting your privacy. 
+              AutoSales (&quot;we&quot;, &quot;us&quot;, or &quot;our&quot;) is committed to protecting your privacy. 
               This Privacy Policy explains how we collect, use, and disclose information about you when you use our website and services.
             </p>
           </section>
