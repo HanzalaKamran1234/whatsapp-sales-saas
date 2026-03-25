@@ -16,7 +16,10 @@ export default function FAQManager() {
   const [form, setForm] = useState({ name: '', keywords: '', answer: '' });
   const [saving, setSaving] = useState(false);
 
-  const fetchFaqs = () => fetch('/api/faqs').then(r => r.json()).then(setFaqs);
+  const fetchFaqs = () => fetch('/api/faqs')
+    .then(r => r.json())
+    .then(d => setFaqs(Array.isArray(d) ? d : []))
+    .catch(() => setFaqs([]));
   useEffect(() => { fetchFaqs(); }, []);
 
   const save = async () => {
@@ -37,7 +40,7 @@ export default function FAQManager() {
     fetchFaqs();
   };
 
-  const filtered = faqs.filter(f => !search || f.name.toLowerCase().includes(search.toLowerCase()) || f.keywords.some(k => k.includes(search.toLowerCase())));
+  const filtered = (Array.isArray(faqs) ? faqs : []).filter(f => !search || (f.name && f.name.toLowerCase().includes(search.toLowerCase())) || (f.keywords && f.keywords.some(k => k.toLowerCase().includes(search.toLowerCase()))));
 
   return (
     <div className="max-w-5xl mx-auto space-y-6 animate-in fade-in zoom-in-95 duration-500 relative">
@@ -71,10 +74,10 @@ export default function FAQManager() {
             {filtered.length === 0 && <tr><td colSpan={4} className="px-6 py-12 text-center text-neutral-600">No rules found. Add one!</td></tr>}
             {filtered.map(faq => (
               <tr key={faq.id} className="hover:bg-neutral-800/40 transition-colors group">
-                <td className="px-6 py-4 font-medium text-white">{faq.name}</td>
+                <td className="px-6 py-4 text-white font-medium">{faq.name || 'Unnamed Rule'}</td>
                 <td className="px-6 py-4">
                   <div className="flex flex-wrap gap-1.5">
-                    {faq.keywords.map(kw => <span key={kw} className="px-2 py-0.5 rounded-md bg-neutral-950 text-xs font-medium text-emerald-400 border border-neutral-800/80 shadow-inner">{kw}</span>)}
+                    {(faq.keywords || []).map(kw => <span key={kw} className="px-2 py-0.5 rounded-md bg-neutral-950 text-xs font-medium text-emerald-400 border border-neutral-800/80 shadow-inner">{kw}</span>)}
                   </div>
                 </td>
                 <td className="px-6 py-4"><p className="line-clamp-2 text-neutral-300 max-w-xs text-xs">{faq.answer}</p></td>

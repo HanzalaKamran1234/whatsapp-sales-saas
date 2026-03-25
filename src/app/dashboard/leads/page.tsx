@@ -13,7 +13,16 @@ export default function LeadsManager() {
 
   const fetchLeads = () => {
     setLoading(true);
-    fetch('/api/leads').then(r => r.json()).then(d => { setLeads(d); setLoading(false); });
+    fetch('/api/leads')
+      .then(r => r.json())
+      .then(d => { 
+        setLeads(Array.isArray(d) ? d : []); 
+        setLoading(false); 
+      })
+      .catch(() => {
+        setLeads([]);
+        setLoading(false);
+      });
   };
   useEffect(() => { fetchLeads(); }, []);
 
@@ -22,9 +31,9 @@ export default function LeadsManager() {
     fetchLeads();
   };
 
-  const filtered = leads.filter(l => {
-    const matchesFilter = filter === 'all' || l.tags.includes(filter);
-    const matchesSearch = !search || l.customer_name.toLowerCase().includes(search.toLowerCase()) || l.customer_number.includes(search);
+  const filtered = (Array.isArray(leads) ? leads : []).filter(l => {
+    const matchesFilter = filter === 'all' || (l.tags && l.tags.includes(filter));
+    const matchesSearch = !search || (l.customer_name && l.customer_name.toLowerCase().includes(search.toLowerCase())) || (l.customer_number && l.customer_number.includes(search));
     return matchesFilter && matchesSearch;
   });
 
@@ -97,18 +106,18 @@ function LeadRow({ lead, onTagChange }: { lead: any; onTagChange: (id: string, t
     <tr className="hover:bg-neutral-800/40 transition-colors group">
       <td className="px-6 py-4 font-medium text-white">
         <div className="flex items-center space-x-3">
-          <div className="w-8 h-8 rounded-full bg-neutral-950 border border-neutral-800 flex items-center justify-center text-xs font-bold text-emerald-400 shadow-inner">{lead.customer_name[0]}</div>
-          <span>{lead.customer_name}</span>
+          <div className="w-8 h-8 rounded-full bg-neutral-950 border border-neutral-800 flex items-center justify-center text-xs font-bold text-emerald-400 shadow-inner">{(lead.customer_name || '?')[0]}</div>
+          <span>{lead.customer_name || 'New Lead'}</span>
         </div>
       </td>
       <td className="px-6 py-4 font-mono text-xs">{lead.customer_number}</td>
       <td className="px-6 py-4 max-w-[200px]"><p className="truncate text-neutral-300">{lead.message}</p></td>
       <td className="px-6 py-4">
         <div className="relative">
-          <button onClick={() => setOpen(o => !o)} className={`px-2.5 py-1 rounded-md text-xs font-semibold border capitalize ${tagStyle(lead.tags[0])}`}>{lead.tags[0]} ▾</button>
+          <button onClick={() => setOpen(o => !o)} className={`px-2.5 py-1 rounded-md text-xs font-semibold border capitalize ${tagStyle(lead.tags?.[0] || 'cold')}`}>{lead.tags?.[0] || 'cold'} ▾</button>
           {open && (
             <div className="absolute top-7 left-0 z-20 bg-neutral-900 border border-neutral-700 rounded-xl shadow-xl overflow-hidden w-24">
-              {(['hot', 'warm', 'cold'] as Tag[]).map(t => <button key={t} onClick={() => { onTagChange(lead.id, t); setOpen(false); }} className="w-full text-left px-3 py-2 text-xs font-medium capitalize hover:bg-neutral-800 text-neutral-300 hover:text-white transition-colors">{t}</button>)}
+              {(['hot', 'warm', 'cold'] as Tag[]).map(t => <button key={t} onClick={() => { onTagChange(lead.lead_id || lead.id, t); setOpen(false); }} className="w-full text-left px-3 py-2 text-xs font-medium capitalize hover:bg-neutral-800 text-neutral-300 hover:text-white transition-colors">{t}</button>)}
             </div>
           )}
         </div>

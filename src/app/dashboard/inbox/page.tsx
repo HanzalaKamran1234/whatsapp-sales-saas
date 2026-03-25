@@ -20,16 +20,23 @@ export default function InboxUI() {
   const [search, setSearch] = useState('');
 
   useEffect(() => {
-    fetch('/api/leads').then(r => r.json()).then((data: Lead[]) => {
-      setLeads(data);
-      setSelected(data[0] ?? null);
-    });
+    fetch('/api/leads')
+      .then(r => r.json())
+      .then((data) => {
+        if (Array.isArray(data)) {
+          setLeads(data);
+          setSelected(data[0] ?? null);
+        } else {
+          setLeads([]);
+        }
+      })
+      .catch(() => setLeads([]));
   }, []);
 
-  const filtered = leads.filter(l =>
+  const filtered = (Array.isArray(leads) ? leads : []).filter(l =>
     !search ||
-    l.customer_name.toLowerCase().includes(search.toLowerCase()) ||
-    l.customer_number.includes(search)
+    (l.customer_name && l.customer_name.toLowerCase().includes(search.toLowerCase())) ||
+    (l.customer_number && l.customer_number.includes(search))
   );
 
   const timeAgo = (iso: string) => {
@@ -76,15 +83,15 @@ export default function InboxUI() {
             <div className="h-14 border-b border-neutral-800 flex items-center justify-between px-5 bg-neutral-950/80 backdrop-blur-md flex-shrink-0">
               <div className="flex items-center space-x-3">
                 <div className="w-8 h-8 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-400 font-bold border border-emerald-500/20 text-xs">
-                  {selected.customer_name[0]}
+                  {(selected.customer_name || '?')[0]}
                 </div>
                 <div>
                   <p className="text-sm font-semibold text-white leading-tight">{selected.customer_name}</p>
                   <p className="text-[10px] text-neutral-500 font-mono">{selected.customer_number}</p>
                 </div>
               </div>
-              <span className={`text-xs font-bold px-2.5 py-1 rounded-md border capitalize ${selected.tags[0] === 'hot' ? 'text-orange-400 bg-orange-500/10 border-orange-500/20' : selected.tags[0] === 'warm' ? 'text-yellow-400 bg-yellow-500/10 border-yellow-500/20' : 'text-blue-400 bg-blue-500/10 border-blue-500/20'}`}>
-                {selected.tags[0]}
+              <span className={`text-xs font-bold px-2.5 py-1 rounded-md border capitalize ${selected.tags?.[0] === 'hot' ? 'text-orange-400 bg-orange-500/10 border-orange-500/20' : selected.tags?.[0] === 'warm' ? 'text-yellow-400 bg-yellow-500/10 border-yellow-500/20' : 'text-blue-400 bg-blue-500/10 border-blue-500/20'}`}>
+                {selected.tags?.[0] || 'cold'}
               </span>
             </div>
 

@@ -12,10 +12,12 @@ export default function SettingsManager() {
 
   useEffect(() => {
     fetch('/api/settings').then(r => r.json()).then(d => {
-      setStatus(d);
-      setAutoReply(d.auto_reply_enabled);
-      if (d.phone_number_id) setForm(f => ({ ...f, phone_number_id: d.phone_number_id, business_account_id: d.business_account_id }));
-    });
+      if (d && !d.error) {
+        setStatus(d);
+        setAutoReply(d.auto_reply_enabled ?? true);
+        if (d.phone_number_id) setForm(f => ({ ...f, phone_number_id: d.phone_number_id, business_account_id: d.business_account_id }));
+      }
+    }).catch(() => {});
   }, []);
 
   const save = async () => {

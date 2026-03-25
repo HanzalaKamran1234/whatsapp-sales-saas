@@ -16,7 +16,10 @@ export default function ProductsManager() {
   const [saving, setSaving] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
-  const fetchProducts = () => fetch('/api/products').then(r => r.json()).then(setProducts);
+  const fetchProducts = () => fetch('/api/products')
+    .then(r => r.json())
+    .then(d => setProducts(Array.isArray(d) ? d : []))
+    .catch(() => setProducts([]));
   useEffect(() => { fetchProducts(); }, []);
 
   const save = async () => {
@@ -69,7 +72,7 @@ export default function ProductsManager() {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {products.map(p => (
+        {(Array.isArray(products) ? products : []).map(p => (
           <div key={p.id} className="bg-neutral-900 border border-neutral-800 rounded-2xl p-5 hover:border-neutral-700 transition-colors group shadow-sm">
             <div className="flex items-start justify-between mb-3">
               <div className="w-10 h-10 rounded-xl bg-neutral-950 border border-neutral-800 flex items-center justify-center shadow-inner">
