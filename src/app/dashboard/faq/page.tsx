@@ -40,14 +40,15 @@ export default function FAQManager() {
     fetchFaqs();
   };
 
-  const filtered = (Array.isArray(faqs) ? faqs : []).filter(f => !search || (f.name && f.name.toLowerCase().includes(search.toLowerCase())) || (f.keywords && f.keywords.some(k => k.toLowerCase().includes(search.toLowerCase()))));
+  const faqsArray = Array.isArray(faqs) ? faqs : [];
+  const filtered = faqsArray.filter(f => !search || (f.name && f.name.toLowerCase().includes(search.toLowerCase())) || (f.keywords && f.keywords.some(k => k.toLowerCase().includes(search.toLowerCase()))));
 
   return (
     <div className="max-w-5xl mx-auto space-y-6 animate-in fade-in zoom-in-95 duration-500 relative">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-white mb-1 tracking-tight">FAQ Rule Engine</h1>
-          <p className="text-neutral-400 text-sm">{faqs.length} rules active — customer messages are matched against these.</p>
+          <p className="text-neutral-400 text-sm">{faqsArray.length} rules active — customer messages are matched against these.</p>
         </div>
         <button onClick={() => setShowModal(true)} className="flex items-center space-x-2 bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2.5 rounded-lg font-medium transition-all shadow-[0_0_15px_rgba(16,185,129,0.2)] text-sm">
           <Plus size={18} /><span>New Rule</span>

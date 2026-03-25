@@ -38,7 +38,7 @@ export default function DashboardOverview() {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard title="Total Leads" value={stats?.total ?? '—'} icon={<Users className="text-blue-400" size={20} />} sub="All time captured" color="blue" />
         <StatCard title="Hot Leads" value={stats?.hot ?? '—'} icon={<Target className="text-orange-400" size={20} />} sub="Need attention" color="orange" />
-        <StatCard title="Rule Match Rate" value={stats ? `${stats.matchRate}%` : '—'} icon={<Zap className="text-purple-400" size={20} />} sub="Auto-replied" color="purple" />
+        <StatCard title="Rule Match Rate" value={stats ? `${stats.matchRate ?? 0}%` : '—'} icon={<Zap className="text-purple-400" size={20} />} sub="Auto-replied" color="purple" />
         <StatCard title="FAQ Rules" value={stats?.faqCount ?? '—'} icon={<HelpCircle className="text-emerald-400" size={20} />} sub={`${stats?.productCount ?? '—'} products listed`} color="emerald" />
       </div>
 
@@ -92,18 +92,18 @@ function RecentLeads() {
   const tagColor = (t: string) => t === 'hot' ? 'text-orange-400 bg-orange-500/10 border-orange-500/20' : t === 'warm' ? 'text-yellow-400 bg-yellow-500/10 border-yellow-500/20' : 'text-blue-400 bg-blue-500/10 border-blue-500/20';
   return (
     <div className="divide-y divide-neutral-800/50">
-      {leads.map(l => (
-        <div key={l.id} className="px-5 py-3.5 flex items-center justify-between hover:bg-neutral-800/30 transition-colors">
+      {(Array.isArray(leads) ? leads : []).map(l => (
+        <div key={l.lead_id || l.id} className="px-5 py-3.5 flex items-center justify-between hover:bg-neutral-800/30 transition-colors">
           <div className="flex items-center space-x-3">
             <div className="w-8 h-8 rounded-full bg-neutral-800 flex items-center justify-center text-xs font-bold text-emerald-400 border border-neutral-700">
               {(l.customer_name || l.customer_number || '?')[0]}
             </div>
             <div>
               <p className="text-sm font-medium text-white leading-tight">{l.customer_name || 'New Lead'}</p>
-              <p className="text-xs text-neutral-500 mt-0.5 truncate max-w-[220px]">{l.message}</p>
+              <p className="text-xs text-neutral-500 mt-0.5 truncate max-w-[220px]">{l.message || 'No message'}</p>
             </div>
           </div>
-          <span className={`px-2.5 py-0.5 rounded-md text-xs font-semibold border shadow-inner capitalize ${tagColor(l.tags ? l.tags[0] : 'cold')}`}>{l.tags ? l.tags[0] : 'cold'}</span>
+          <span className={`px-2.5 py-0.5 rounded-md text-xs font-semibold border shadow-inner capitalize ${tagColor(l.tags?.[0] || 'cold')}`}>{l.tags?.[0] || 'cold'}</span>
         </div>
       ))}
     </div>

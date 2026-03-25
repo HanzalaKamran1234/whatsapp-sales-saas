@@ -58,7 +58,7 @@ export default function ProductsManager() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-white mb-1 tracking-tight">Product Catalog</h1>
-          <p className="text-neutral-400 text-sm">{products.length} products — used in auto-reply context.</p>
+          <p className="text-neutral-400 text-sm">{(Array.isArray(products) ? products : []).length} products — used in auto-reply context.</p>
         </div>
         <div className="flex items-center space-x-3">
           <input ref={fileRef} type="file" accept=".csv" onChange={handleCSV} className="hidden" />

@@ -60,13 +60,13 @@ export default function InboxUI() {
           </div>
         </div>
         <div className="flex-1 overflow-y-auto divide-y divide-neutral-800/50">
-          {filtered.map(lead => (
+          {(Array.isArray(filtered) ? filtered : []).map(lead => (
             <button key={lead.lead_id} onClick={() => setSelected(lead)} className={`w-full text-left p-4 transition-colors border-l-2 ${selected?.lead_id === lead.lead_id ? 'bg-neutral-800/80 border-emerald-500' : 'hover:bg-neutral-800/40 border-transparent'}`}>
               <div className="flex justify-between items-center mb-1">
-                <span className={`text-sm font-medium truncate ${selected?.lead_id === lead.lead_id ? 'text-white' : 'text-neutral-300'}`}>{lead.customer_name}</span>
-                <span className="text-[10px] text-neutral-500 flex-shrink-0 ml-2">{timeAgo(lead.created_at)}</span>
+                <span className={`text-sm font-medium truncate ${selected?.lead_id === lead.lead_id ? 'text-white' : 'text-neutral-300'}`}>{lead.customer_name || 'New Lead'}</span>
+                <span className="text-[10px] text-neutral-500 flex-shrink-0 ml-2">{lead.created_at ? timeAgo(lead.created_at) : ''}</span>
               </div>
-              <p className="text-xs text-neutral-500 truncate">{lead.message}</p>
+              <p className="text-xs text-neutral-500 truncate">{lead.message || 'No message'}</p>
               {!lead.rule_matched && (
                 <span className="mt-1.5 inline-block text-[9px] text-orange-400 bg-orange-500/10 border border-orange-500/20 px-1.5 py-0.5 rounded font-bold">Needs Reply</span>
               )}
@@ -86,8 +86,8 @@ export default function InboxUI() {
                   {(selected.customer_name || '?')[0]}
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-white leading-tight">{selected.customer_name}</p>
-                  <p className="text-[10px] text-neutral-500 font-mono">{selected.customer_number}</p>
+                  <p className="text-sm font-semibold text-white leading-tight">{selected.customer_name || 'New Lead'}</p>
+                  <p className="text-[10px] text-neutral-500 font-mono">{selected.customer_number || 'No number'}</p>
                 </div>
               </div>
               <span className={`text-xs font-bold px-2.5 py-1 rounded-md border capitalize ${selected.tags?.[0] === 'hot' ? 'text-orange-400 bg-orange-500/10 border-orange-500/20' : selected.tags?.[0] === 'warm' ? 'text-yellow-400 bg-yellow-500/10 border-yellow-500/20' : 'text-blue-400 bg-blue-500/10 border-blue-500/20'}`}>
@@ -104,9 +104,9 @@ export default function InboxUI() {
               {/* Customer message */}
               <div className="flex flex-col items-start">
                 <div className="max-w-[70%] px-4 py-2.5 bg-neutral-800 border-l-2 border-neutral-600 text-neutral-200 rounded-2xl rounded-tl-sm shadow-sm">
-                  <p className="text-sm leading-relaxed">{selected.message}</p>
+                  <p className="text-sm leading-relaxed">{selected.message || 'No message'}</p>
                 </div>
-                <span className="text-[10px] text-neutral-500 mt-1 ml-1 font-medium">{timeAgo(selected.created_at)}</span>
+                <span className="text-[10px] text-neutral-500 mt-1 ml-1 font-medium">{selected.created_at ? timeAgo(selected.created_at) : ''}</span>
               </div>
 
               {/* Bot reply */}

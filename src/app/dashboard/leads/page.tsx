@@ -58,11 +58,15 @@ export default function LeadsManager() {
 
       {/* Filter Tabs */}
       <div className="flex space-x-2">
-        {FILTERS.map(f => (
-          <button key={f} onClick={() => setFilter(f)} className={`px-4 py-1.5 rounded-lg text-sm font-semibold capitalize transition-all border ${filter === f ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400' : 'border-neutral-800 text-neutral-500 hover:text-white hover:bg-neutral-800'}`}>
-            {f === 'all' ? `All (${leads.length})` : `${f.charAt(0).toUpperCase() + f.slice(1)} (${leads.filter(l => l.tags.includes(f)).length})`}
-          </button>
-        ))}
+        {FILTERS.map(f => {
+          const leadsArray = Array.isArray(leads) ? leads : [];
+          const count = f === 'all' ? leadsArray.length : leadsArray.filter(l => l.tags?.includes(f)).length;
+          return (
+            <button key={f} onClick={() => setFilter(f)} className={`px-4 py-1.5 rounded-lg text-sm font-semibold capitalize transition-all border ${filter === f ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400' : 'border-neutral-800 text-neutral-500 hover:text-white hover:bg-neutral-800'}`}>
+              {f.charAt(0).toUpperCase() + f.slice(1)} ({count})
+            </button>
+          );
+        })}
       </div>
 
       <div className="bg-neutral-900 border border-neutral-800 rounded-2xl overflow-hidden shadow-xl">
@@ -110,8 +114,8 @@ function LeadRow({ lead, onTagChange }: { lead: any; onTagChange: (id: string, t
           <span>{lead.customer_name || 'New Lead'}</span>
         </div>
       </td>
-      <td className="px-6 py-4 font-mono text-xs">{lead.customer_number}</td>
-      <td className="px-6 py-4 max-w-[200px]"><p className="truncate text-neutral-300">{lead.message}</p></td>
+      <td className="px-6 py-4 font-mono text-xs">{lead.customer_number || 'No number'}</td>
+      <td className="px-6 py-4 max-w-[200px]"><p className="truncate text-neutral-300">{lead.message || 'No message'}</p></td>
       <td className="px-6 py-4">
         <div className="relative">
           <button onClick={() => setOpen(o => !o)} className={`px-2.5 py-1 rounded-md text-xs font-semibold border capitalize ${tagStyle(lead.tags?.[0] || 'cold')}`}>{lead.tags?.[0] || 'cold'} ▾</button>
