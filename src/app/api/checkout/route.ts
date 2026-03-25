@@ -9,22 +9,28 @@ export async function POST(request: Request) {
 
     const { planId } = await request.json();
     
-    // Define plan details (Map these to your Stripe Price IDs in production)
+    const starterId = process.env.STRIPE_STARTER_PRICE_ID;
+    const proId = process.env.STRIPE_PRO_PRICE_ID;
+
     const PLANS: Record<string, { priceId: string; name: string }> = {
       starter: {
-        priceId: process.env.STRIPE_STARTER_PRICE_ID || '',
+        priceId: starterId || '',
         name: 'Starter Plan',
       },
       pro: {
-        priceId: process.env.STRIPE_PRO_PRICE_ID || '',
+        priceId: proId || '',
         name: 'Pro Plan',
       },
     };
 
     const plan = PLANS[planId];
-    if (!plan || !plan.priceId) {
-      return NextResponse.json({ error: 'Invalid plan selected or Price ID missing' }, { status: 400 });
+    if (!plan) {
+      return NextResponse.json({ error: `Plan '${planId}' does not exist.` }, { status: 400 });
     }
+    if (!plan.priceId) {
+      return NextResponse.json({ error: `Stripe Price ID for '${planId}' is missing in your Vercel Environment Variables.` }, { status: 400 });
+    }
+
 
     // Create Stripe Checkout Session
     const session = await stripe.checkout.sessions.create({
