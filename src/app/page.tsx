@@ -44,8 +44,9 @@ export default function Home() {
       if (data.url) {
         window.location.href = data.url;
       } else {
-        alert(data.error || 'Failed to create checkout session. Make sure your Stripe Price IDs are correct in Vercel.');
+        alert(data.error || 'Failed to create checkout session. Make sure your Stripe Product IDs are correct in Vercel.');
       }
+
     } catch (err) {
       console.error(err);
       alert('Connection error. Please check your internet or try again later.');
