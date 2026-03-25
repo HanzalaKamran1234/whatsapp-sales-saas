@@ -1,5 +1,4 @@
 import { NextResponse } from 'next/server';
-import { db } from '@/lib/firebase/server';
 import { processIncomingMessage } from '@/lib/whatsapp/engine';
 
 // Meta requires a GET request to verify the webhook initially

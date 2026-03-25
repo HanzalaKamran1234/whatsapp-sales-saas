@@ -1,20 +1,32 @@
-import * as admin from 'firebase-admin';
+// Firebase Admin SDK - only initialized when env vars are present
+// In demo/local mode, this is not required
 
-if (!admin.apps.length) {
+let db: any = null;
+
+export function getDb() {
+  if (db) return db;
+  
+  // Only initialize if Firebase env vars are set
+  if (!process.env.FIREBASE_PROJECT_ID) {
+    console.log('Firebase not configured - running in demo mode');
+    return null;
+  }
+
   try {
-    // Make sure to set these environment variables in your .env.local file
-    admin.initializeApp({
-      credential: admin.credential.cert({
-        projectId: process.env.FIREBASE_PROJECT_ID,
-        clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-        // Replace escaped newlines if they exist
-        privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
-      }),
-    });
-    console.log('Firebase admin initialized.');
+    const admin = require('firebase-admin');
+    if (!admin.apps.length) {
+      admin.initializeApp({
+        credential: admin.credential.cert({
+          projectId: process.env.FIREBASE_PROJECT_ID,
+          clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+          privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
+        }),
+      });
+    }
+    db = admin.firestore();
+    return db;
   } catch (error) {
-    console.error('Firebase admin initialization error', error);
+    console.error('Firebase init error:', error);
+    return null;
   }
 }
-
-export const db = admin.firestore();
