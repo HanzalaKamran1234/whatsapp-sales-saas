@@ -1,6 +1,6 @@
 'use client';
 import { useState } from 'react';
-import { Mail, MessageSquare, Send, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
+import { Send, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
 import Link from 'next/link';
 
 export default function ContactPage() {
@@ -101,21 +101,15 @@ export default function ContactPage() {
           )}
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
-          <ContactCard icon={<Mail size={20} />} label="Email" value="support@whatsappsaas.com" />
-          <ContactCard icon={<MessageSquare size={20} />} label="WhatsApp" value="+1 (234) 567-890" />
+        {/* Optional small footer */}
+        <div className="pt-12 border-t border-neutral-900 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-neutral-500 font-medium">
+          <p>© {new Date().getFullYear()} WhatsApp SaaS</p>
+          <div className="flex items-center space-x-6">
+            <Link href="/privacy" className="hover:text-emerald-400 transition-colors">Privacy Policy</Link>
+            <Link href="/terms" className="hover:text-emerald-400 transition-colors">Terms of Service</Link>
+          </div>
         </div>
       </div>
-    </div>
-  );
-}
-
-function ContactCard({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
-  return (
-    <div className="bg-neutral-900 border border-neutral-800 p-4 rounded-xl flex flex-col items-center text-center space-y-1.5 backdrop-blur-md">
-      <div className="text-neutral-500">{icon}</div>
-      <p className="text-xs font-bold text-neutral-400 uppercase tracking-widest">{label}</p>
-      <p className="text-sm font-medium text-white">{value}</p>
     </div>
   );
 }
