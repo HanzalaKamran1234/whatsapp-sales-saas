@@ -11,6 +11,7 @@ interface Stats {
   matchRate: number;
   faqCount: number;
   productCount: number;
+  credits: { used: number; limit: number; percent: number; plan: string };
 }
 
 export default function DashboardOverview() {
@@ -70,6 +71,9 @@ export default function DashboardOverview() {
           <p className="text-neutral-400 text-xs mt-0.5">A customer asked something outside your defined rules. <Link href="/dashboard/inbox" className="text-orange-400 underline underline-offset-2 hover:text-orange-300">Open Inbox →</Link></p>
         </div>
       </div>
+
+      {/* Message Credit Usage */}
+      {stats && <CreditWidget credits={stats.credits} />}
     </div>
   );
 }
@@ -120,3 +124,64 @@ function QuickBtn({ href, label, color }: { href: string; label: string; color: 
     <Link href={href} className={`block w-full text-center font-medium py-2.5 rounded-lg text-sm transition-all ${cls}`}>{label}</Link>
   );
 }
+
+function CreditWidget({ credits }: { credits: { used: number; limit: number; percent: number; plan: string } }) {
+  const isWarning = credits.percent >= 80;
+  const isFull = credits.percent >= 100;
+  const barColor = isFull ? 'bg-red-500' : isWarning ? 'bg-orange-500' : 'bg-emerald-500';
+  const planLabel = credits.plan.charAt(0).toUpperCase() + credits.plan.slice(1);
+
+  return (
+    <div className={`rounded-2xl border p-6 shadow-sm ${isFull ? 'bg-red-500/5 border-red-500/20' : isWarning ? 'bg-orange-500/5 border-orange-500/20' : 'bg-neutral-900 border-neutral-800'}`}>
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center space-x-3">
+          <div className={`p-2 rounded-lg ${isFull ? 'bg-red-500/10' : isWarning ? 'bg-orange-500/10' : 'bg-neutral-800'}`}>
+            <MessageSquare size={18} className={isFull ? 'text-red-400' : isWarning ? 'text-orange-400' : 'text-emerald-400'} />
+          </div>
+          <div>
+            <p className="text-sm font-semibold text-white">Auto-Reply Credits</p>
+            <p className="text-xs text-neutral-500">
+              <span className={`font-bold ${isFull ? 'text-red-400' : isWarning ? 'text-orange-400' : 'text-emerald-400'}`}>{credits.used}</span>
+              {' '}/ {credits.limit === Infinity ? '∞' : credits.limit} used this month
+            </p>
+          </div>
+        </div>
+        <div className="flex items-center space-x-2">
+          <span className={`text-xs font-bold px-2.5 py-1 rounded-md border ${planLabel === 'Free' ? 'bg-neutral-800 text-neutral-400 border-neutral-700' : planLabel === 'Starter' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-purple-500/10 text-purple-400 border-purple-500/20'}`}>
+            {planLabel} Plan
+          </span>
+          {(isWarning || isFull) && (
+            <Link href="/" className="text-xs font-bold bg-emerald-500 hover:bg-emerald-600 text-white px-3 py-1 rounded-md transition-all shadow-[0_2px_10px_rgba(16,185,129,0.3)]">
+              Upgrade →
+            </Link>
+          )}
+        </div>
+      </div>
+
+      {/* Progress Bar */}
+      <div className="w-full bg-neutral-800 rounded-full h-2.5 overflow-hidden shadow-inner">
+        <div
+          className={`h-2.5 rounded-full transition-all duration-700 ease-out ${barColor} ${isFull ? '' : 'shadow-[0_0_8px_rgba(16,185,129,0.5)]'}`}
+          style={{ width: `${Math.min(credits.percent, 100)}%` }}
+        />
+      </div>
+
+      {isFull && (
+        <p className="text-xs text-red-400 font-semibold mt-2">
+          ⚠ Credit limit reached! Auto-replies are paused. <Link href="/" className="underline hover:text-red-300">Upgrade your plan</Link> to resume.
+        </p>
+      )}
+      {isWarning && !isFull && (
+        <p className="text-xs text-orange-400 font-medium mt-2">
+          You&apos;ve used {credits.percent}% of your credits. Consider upgrading before you run out.
+        </p>
+      )}
+      {!isWarning && (
+        <p className="text-xs text-neutral-500 mt-2 font-medium">
+          {credits.limit === Infinity ? 'Unlimited auto-replies on your plan.' : `${credits.limit - credits.used} credits remaining this month.`}
+        </p>
+      )}
+    </div>
+  );
+}
+
