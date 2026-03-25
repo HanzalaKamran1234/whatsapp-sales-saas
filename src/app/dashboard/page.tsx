@@ -132,8 +132,6 @@ function CreditWidget({ credits }: { credits: { used: number; limit: number; per
   const isWarning = credits.percent >= 80;
   const isFull = credits.percent >= 100;
   const barColor = isFull ? 'bg-red-500' : isWarning ? 'bg-orange-500' : 'bg-emerald-500';
-  const planLabel = credits.plan.charAt(0).toUpperCase() + credits.plan.slice(1);
-
   return (
     <div className={`rounded-2xl border p-6 shadow-sm ${isFull ? 'bg-red-500/5 border-red-500/20' : isWarning ? 'bg-orange-500/5 border-orange-500/20' : 'bg-neutral-900 border-neutral-800'}`}>
       <div className="flex items-center justify-between mb-4">
@@ -144,14 +142,14 @@ function CreditWidget({ credits }: { credits: { used: number; limit: number; per
           <div>
             <p className="text-sm font-semibold text-white">Auto-Reply Credits</p>
             <p className="text-xs text-neutral-500">
-              <span className={`font-bold ${isFull ? 'text-red-400' : isWarning ? 'text-orange-400' : 'text-emerald-400'}`}>{credits.used}</span>
-              {' '}/ {credits.limit === Infinity ? '∞' : credits.limit} used this month
+              <span className={`font-bold ${isFull ? 'text-red-400' : isWarning ? 'text-orange-400' : 'text-emerald-400'}`}>{credits.used ?? 0}</span>
+              {' '}/ {credits.limit === 999999 ? '∞' : (credits.limit ?? '—')} used this month
             </p>
           </div>
         </div>
         <div className="flex items-center space-x-2">
-          <span className={`text-xs font-bold px-2.5 py-1 rounded-md border ${planLabel === 'Free' ? 'bg-neutral-800 text-neutral-400 border-neutral-700' : planLabel === 'Starter' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-purple-500/10 text-purple-400 border-purple-500/20'}`}>
-            {planLabel} Plan
+          <span className={`text-xs font-bold px-2.5 py-1 rounded-md border ${(credits.plan || '').toLowerCase() === 'starter' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : (credits.plan || '').toLowerCase() === 'pro' ? 'bg-purple-500/10 text-purple-400 border-purple-500/20' : 'bg-neutral-800 text-neutral-400 border-neutral-700'}`}>
+            {(credits.plan ? credits.plan.charAt(0).toUpperCase() + credits.plan.slice(1) : 'Free')} Plan
           </span>
           {(isWarning || isFull) && (
             <Link href="/" className="text-xs font-bold bg-emerald-500 hover:bg-emerald-600 text-white px-3 py-1 rounded-md transition-all shadow-[0_2px_10px_rgba(16,185,129,0.3)]">

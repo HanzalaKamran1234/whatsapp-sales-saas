@@ -32,10 +32,10 @@ export async function GET() {
   const plan = profile?.plan || 'free';
 
   // Credit usage logic
-  const planLimits: Record<string, number> = { free: 50, starter: 1000, pro: Infinity };
+  const planLimits: Record<string, number> = { free: 50, starter: 1000, pro: 999999 };
   const creditsUsed = ruleMatched; // each auto-reply = 1 credit
   const creditsLimit = planLimits[plan] || 50;
-  const creditsPercent = creditsLimit === Infinity ? 0 : Math.min(100, Math.round((creditsUsed / creditsLimit) * 100));
+  const creditsPercent = creditsLimit === 999999 ? 0 : Math.min(100, Math.round((creditsUsed / creditsLimit) * 100));
 
   return NextResponse.json({
     total, hot, warm, cold, matchRate,
