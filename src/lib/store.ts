@@ -3,6 +3,14 @@
 
 export type Tag = 'hot' | 'warm' | 'cold';
 
+export interface SellerConfig {
+  access_token: string;
+  phone_number_id: string;
+  business_account_id: string;
+  auto_reply_enabled: boolean;
+  connected_at: string;
+}
+
 export interface Lead {
   lead_id: string;
   user_id: string;
@@ -73,4 +81,6 @@ export const store = {
   leads: [...demoLeads],
   faqs: [...demoFAQs],
   products: [...demoProducts],
+  // Seller WhatsApp config - updated via Settings page
+  sellerConfig: null as SellerConfig | null,
 };
