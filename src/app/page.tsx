@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { Bot, MessageSquare, Zap, ShieldCheck, Check, ChevronDown, User, LogIn } from 'lucide-react';
-import { SignedIn, SignedOut, UserButton, SignInButton, SignUpButton } from "@clerk/nextjs";
+import { SignedIn, SignedOut, UserButton, SignInButton, SignUpButton, useAuth, useClerk } from "@clerk/nextjs";
 
 // ── COUNTRIES & PRICING DATA ─────────────────────────────────────────────────
 const COUNTRIES = [
@@ -29,8 +29,17 @@ export default function Home() {
   const [loading, setLoading] = useState<string | null>(null);
   const country = COUNTRIES[countryIdx];
 
+  const { userId } = useAuth();
+  const { openSignUp } = useClerk();
+
   const handleCheckout = async (planId: string) => {
     if (planId === 'free') return; // Free plan handled by Link
+    
+    if (!userId) {
+      openSignUp({ afterSignUpUrl: '/#pricing' });
+      return;
+    }
+
     setLoading(planId);
     try {
       const res = await fetch('/api/checkout', {
@@ -38,15 +47,21 @@ export default function Home() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ planId }),
       });
+      
+      if (res.status === 401) {
+        openSignUp({ afterSignUpUrl: '/#pricing' });
+        return;
+      }
+
       const data = await res.json();
       if (data.url) {
         window.location.href = data.url;
       } else {
-        alert(data.error || 'Failed to create checkout session');
+        alert(data.error || 'Failed to create checkout session. Make sure your Stripe Price IDs are correct in Vercel.');
       }
     } catch (err) {
       console.error(err);
-      alert('Something went wrong');
+      alert('Connection error. Please check your internet or try again later.');
     } finally {
       setLoading(null);
     }
