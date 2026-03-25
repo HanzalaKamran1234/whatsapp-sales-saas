@@ -9,7 +9,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "WhatsApp Sales SaaS",
+  title: "AutoSales",
   description: "Automate your WhatsApp sales with ease.",
 };
 
