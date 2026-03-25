@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { Smartphone, Lock, Webhook, Save, CheckCircle2, AlertCircle, ToggleLeft, ToggleRight, Loader2, Copy } from "lucide-react";
 
 export default function SettingsManager() {
-  const [form, setForm] = useState({ access_token: '', phone_number_id: '', business_account_id: '' });
+  const [form, setForm] = useState<{ access_token: string; phone_number_id: string; business_account_id: string }>({ access_token: '', phone_number_id: '', business_account_id: '' });
   const [status, setStatus] = useState<{ connected: boolean; auto_reply_enabled: boolean; connected_at: string | null; access_token_set: boolean }>({ connected: false, auto_reply_enabled: true, connected_at: null, access_token_set: false });
   const [saving, setSaving] = useState(false);
   const [toast, setToast] = useState<{ type: 'success' | 'error'; msg: string } | null>(null);
@@ -139,7 +139,10 @@ export default function SettingsManager() {
   );
 }
 
-function Field({ label, value, onChange, placeholder, type = 'text', icon, hint }: any) {
+function Field({ label, value, onChange, placeholder, type = 'text', icon, hint }: {
+  label: string; value: string; onChange: (v: string) => void; placeholder: string;
+  type?: string; icon?: React.ReactNode; hint?: string;
+}) {
   return (
     <div className="space-y-1.5">
       <label className="text-sm font-medium text-neutral-300">{label}</label>
