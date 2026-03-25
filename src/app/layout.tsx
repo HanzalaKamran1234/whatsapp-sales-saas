@@ -11,7 +11,7 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "AutoSales",
   description: "Automate your WhatsApp sales with ease.",
-  icons: { icon: '/icon.png?v=2' },
+  icons: { icon: '/icon.png?v=3' },
 };
 
 export default function RootLayout({
