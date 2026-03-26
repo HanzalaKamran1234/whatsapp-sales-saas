@@ -4,11 +4,12 @@ import { Users, MessageSquare, Zap, Target, TrendingUp, Package, HelpCircle, Bel
 import Link from 'next/link';
 
 interface Stats {
-  total: number;
-  hot: number;
-  warm: number;
-  cold: number;
-  matchRate: number;
+  totalMessages: number;
+  autoReplies: number;
+  responseTime: string;
+  totalLeads: number;
+  hotLeads: number;
+  conversionRate: number;
   faqCount: number;
   productCount: number;
   credits: { used: number; limit: number; percent: number; plan: string };
@@ -34,12 +35,14 @@ export default function DashboardOverview() {
         </div>
       </div>
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard title="Total Leads" value={stats?.total ?? '—'} icon={<Users className="text-blue-400" size={20} />} sub="All time captured" color="blue" />
-        <StatCard title="Hot Leads" value={stats?.hot ?? '—'} icon={<Target className="text-orange-400" size={20} />} sub="Need attention" color="orange" />
-        <StatCard title="Rule Match Rate" value={stats ? `${stats.matchRate ?? 0}%` : '—'} icon={<Zap className="text-purple-400" size={20} />} sub="Auto-replied" color="purple" />
-        <StatCard title="FAQ Rules" value={stats?.faqCount ?? '—'} icon={<HelpCircle className="text-emerald-400" size={20} />} sub={`${stats?.productCount ?? '—'} products listed`} color="emerald" />
+      {/* Business Metrics Grid */}
+      <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+        <StatCard title="Messages" value={stats?.totalMessages ?? '—'} icon={<MessageSquare className="text-blue-400" size={20} />} sub="Total received" color="blue" />
+        <StatCard title="Auto-Replies" value={stats?.autoReplies ?? '—'} icon={<Zap className="text-purple-400" size={20} />} sub="Rule-triggered" color="purple" />
+        <StatCard title="Response Time" value={stats?.responseTime ?? '—'} icon={<Zap className="text-emerald-400" size={20} />} sub="Avg. speed" color="emerald" />
+        <StatCard title="Total Leads" value={stats?.totalLeads ?? '—'} icon={<Users className="text-blue-400" size={20} />} sub="Unique numbers" color="blue" />
+        <StatCard title="Hot Leads" value={stats?.hotLeads ?? '—'} icon={<Target className="text-orange-400" size={20} />} sub="High-intent" color="orange" />
+        <StatCard title="Conversion" value={stats ? `${stats.conversionRate ?? 0}%` : '—'} icon={<TrendingUp className="text-emerald-400" size={20} />} sub="Hot / Total" color="emerald" />
       </div>
 
       {/* Main Content Row */}

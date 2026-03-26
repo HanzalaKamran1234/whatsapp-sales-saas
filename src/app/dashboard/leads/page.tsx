@@ -37,6 +37,30 @@ export default function LeadsManager() {
     return matchesFilter && matchesSearch;
   });
 
+  const handleExportCSV = () => {
+    if (!filtered || filtered.length === 0) return;
+    const headers = ['Phone Number', 'Message', 'Reply', 'Tags', 'Rule Matched', 'Date'];
+    const csvContent = [
+      headers.join(','),
+      ...filtered.map(l => [
+        l.customer_number || '',
+        `"${(l.message || '').replace(/"/g, '""')}"`,
+        `"${(l.reply || '').replace(/"/g, '""')}"`,
+        (l.tags || []).join(';'),
+        l.rule_matched ? 'Yes' : 'No',
+        new Date(l.created_at).toLocaleString()
+      ].join(','))
+    ].join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `leads_export_${new Date().toISOString().split('T')[0]}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <div className="max-w-6xl mx-auto space-y-6 animate-in fade-in zoom-in-95 duration-500">
       <div className="flex items-center justify-between">
@@ -49,7 +73,7 @@ export default function LeadsManager() {
             <RefreshCw size={16} className={loading ? 'animate-spin' : ''} />
             <span>Refresh</span>
           </button>
-          <button className="flex items-center space-x-2 bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2.5 rounded-lg font-medium transition-all shadow-[0_0_15px_rgba(16,185,129,0.2)] text-sm">
+          <button onClick={handleExportCSV} className="flex items-center space-x-2 bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2.5 rounded-lg font-medium transition-all shadow-[0_0_15px_rgba(16,185,129,0.2)] text-sm">
             <Download size={16} />
             <span>Export CSV</span>
           </button>

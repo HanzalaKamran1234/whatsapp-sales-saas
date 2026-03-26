@@ -21,25 +21,31 @@ export async function processIncomingMessage(phoneNumberId: string, fromNumber: 
     let reply = "Our representative will get back to you shortly.";
     let ruleMatched = false;
 
-    // 2. Fetch FAQ rules for this user
-    const { data: faqs, error: faqsError } = await supabase
-      .from('faqs')
-      .select('*')
-      .eq('user_id', userId);
+    const autoReplyOn = profile.auto_reply_enabled !== false;
 
-    if (!faqsError && faqs) {
-      for (const faq of faqs) {
-        const keywords = faq.keywords || [];
-        if (keywords.some((k: string) => messageBody.toLowerCase().includes(k.toLowerCase()))) {
-          reply = faq.answer;
-          ruleMatched = true;
-          break;
+    if (autoReplyOn) {
+      // 2. Fetch FAQ rules for this user
+      const { data: faqs, error: faqsError } = await supabase
+        .from('faqs')
+        .select('*')
+        .eq('user_id', userId);
+
+      if (!faqsError && faqs) {
+        for (const faq of faqs) {
+          const keywords = faq.keywords || [];
+          if (keywords.some((k: string) => messageBody.toLowerCase().includes(k.toLowerCase()))) {
+            reply = faq.answer;
+            ruleMatched = true;
+            break;
+          }
         }
       }
-    }
 
-    // 3. Send the reply via WhatsApp API
-    await sendWhatsAppMessage(phoneNumberId, fromNumber, reply, profile.whatsapp_access_token);
+      // 3. Send the reply via WhatsApp API
+      await sendWhatsAppMessage(phoneNumberId, fromNumber, reply, profile.whatsapp_access_token);
+    } else {
+      reply = ''; // No automated reply sent since the bot is paused
+    }
 
     // 4. Save the lead/interaction to Supabase
     const { error: leadError } = await supabase

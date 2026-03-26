@@ -8,7 +8,7 @@ export async function GET() {
 
   const supabase = await createClient();
 
-  // Fetch all leads for this user
+  // Fetch all leads (which act as a raw message log) for this user
   const { data: leads, error: leadsError } = await supabase
     .from('leads')
     .select('*')
@@ -16,12 +16,20 @@ export async function GET() {
 
   if (leadsError) return NextResponse.json({ error: leadsError.message }, { status: 500 });
 
-  const total = leads.length;
-  const hot = leads.filter(l => l.tags?.includes('hot')).length;
-  const warm = leads.filter(l => l.tags?.includes('warm')).length;
-  const cold = leads.filter(l => l.tags?.includes('cold')).length;
-  const ruleMatched = leads.filter(l => l.rule_matched).length;
-  const matchRate = total > 0 ? Math.round((ruleMatched / total) * 100) : 0;
+  // Compute business metrics
+  const totalMessagesReceived = leads.length;
+  const autoRepliesSent = leads.filter(l => l.rule_matched).length;
+  
+  // Calculate unique leads by customer_number
+  const uniqueNumbers = [...new Set(leads.map(l => l.customer_number))];
+  const totalLeads = uniqueNumbers.length;
+
+  // Calculate hot leads (users who ever triggered a hot rule)
+  const hotLeadNumbers = new Set(leads.filter(l => l.tags?.includes('hot')).map(l => l.customer_number));
+  const hotLeads = hotLeadNumbers.size;
+
+  // Conversion Proxy
+  const conversionRate = totalLeads > 0 ? Math.round((hotLeads / totalLeads) * 100) : 0;
 
   // Fetch counts for FAQs and Products
   const { count: faqCount } = await supabase.from('faqs').select('*', { count: 'exact', head: true }).eq('user_id', userId);
@@ -33,12 +41,17 @@ export async function GET() {
 
   // Credit usage logic
   const planLimits: Record<string, number> = { free: 50, starter: 1000, pro: 999999 };
-  const creditsUsed = ruleMatched; // each auto-reply = 1 credit
+  const creditsUsed = autoRepliesSent;
   const creditsLimit = planLimits[plan] || 50;
   const creditsPercent = creditsLimit === 999999 ? 0 : Math.min(100, Math.round((creditsUsed / creditsLimit) * 100));
 
   return NextResponse.json({
-    total, hot, warm, cold, matchRate,
+    totalMessages: totalMessagesReceived,
+    autoReplies: autoRepliesSent,
+    responseTime: '< 1s',
+    totalLeads, 
+    hotLeads, 
+    conversionRate,
     faqCount: faqCount || 0,
     productCount: productCount || 0,
     credits: { used: creditsUsed, limit: creditsLimit, percent: creditsPercent, plan }

@@ -107,8 +107,11 @@ export default function FAQManager() {
               <Field label="Rule Name (e.g. Pricing Inquiry)" value={form.name} onChange={v => setForm(f => ({ ...f, name: v }))} placeholder="Pricing Inquiry" />
               <Field label="Keywords (comma-separated)" value={form.keywords} onChange={v => setForm(f => ({ ...f, keywords: v }))} placeholder="price, cost, kitna, rate" />
               <div className="space-y-1.5">
-                <label className="text-sm font-medium text-neutral-300">Auto-Reply Message</label>
-                <textarea value={form.answer} onChange={e => setForm(f => ({ ...f, answer: e.target.value }))} rows={3} placeholder="Our products start at PKR 1500..." className="w-full bg-neutral-950 border border-neutral-800 rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-emerald-500 transition-colors resize-none shadow-inner" />
+                <div className="flex items-center justify-between">
+                  <label className="text-sm font-medium text-neutral-300">Auto-Reply Message</label>
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">💡 Pro Tip: Add Stripe/Shopify links!</span>
+                </div>
+                <textarea value={form.answer} onChange={e => setForm(f => ({ ...f, answer: e.target.value }))} rows={4} placeholder="Our packages start at $50. Order securely here: https://buy.stripe.com/..." className="w-full bg-neutral-950 border border-neutral-800 rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-emerald-500 transition-colors resize-none shadow-inner" />
               </div>
             </div>
             <div className="flex space-x-3 mt-6">
