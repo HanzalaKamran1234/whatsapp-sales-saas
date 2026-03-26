@@ -9,7 +9,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
       {/* Sidebar */}
       <aside className="w-64 bg-neutral-900 border-r border-neutral-800 flex flex-col shadow-2xl z-10">
         <div className="p-6 flex items-center space-x-2">
-          <img src="/icon.png" alt="AutoSales" className="w-8 h-8 rounded-xl shadow-[0_0_10px_rgba(16,185,129,0.4)]" />
+          <img src="/icon.png?v=6" alt="AutoSales" className="w-8 h-8 rounded-xl shadow-[0_0_10px_rgba(16,185,129,0.4)]" />
           <div>
             <h1 className="text-xl font-bold tracking-tight text-white">
               AutoSales

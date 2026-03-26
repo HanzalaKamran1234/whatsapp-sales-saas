@@ -62,7 +62,7 @@ export default function Home() {
 
       <nav className="max-w-6xl w-full flex flex-col md:flex-row items-center justify-between py-6 gap-y-6 md:gap-y-0 relative z-50">
         <div className="flex items-center space-x-2">
-          <img src="/icon.png" alt="AutoSales" className="w-8 h-8 rounded-lg shadow-[0_0_15px_rgba(16,185,129,0.5)]" />
+          <img src="/icon.png?v=6" alt="AutoSales" className="w-8 h-8 rounded-lg shadow-[0_0_15px_rgba(16,185,129,0.5)]" />
           <span className="text-xl font-bold tracking-tight">AutoSales</span>
         </div>
         
@@ -253,7 +253,7 @@ export default function Home() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
           <div className="col-span-2">
              <div className="flex items-center space-x-2 mb-4">
-              <img src="/icon.png" alt="AutoSales" className="w-7 h-7 rounded-[10px] shadow-[0_0_10px_rgba(16,185,129,0.5)]" />
+              <img src="/icon.png?v=6" alt="AutoSales" className="w-7 h-7 rounded-[10px] shadow-[0_0_10px_rgba(16,185,129,0.5)]" />
               <span className="text-lg font-bold">AutoSales</span>
             </div>
             <p className="text-neutral-500 text-sm max-w-xs">Helping modern businesses automate their WhatsApp sales and capture more leads 24/7.</p>
